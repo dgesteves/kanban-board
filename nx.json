@@ -52,5 +52,6 @@
       }
     }
   },
-  "defaultProject": "kanban-board"
+  "defaultProject": "kanban-board",
+  "nxCloudAccessToken": "OWM4ZGI5NWYtNGI2Ny00NzRhLTgwZTUtZTMzZjdjMzU3ZWExfHJlYWQtd3JpdGU="
 }
