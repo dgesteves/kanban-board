@@ -6,7 +6,7 @@
     "start": "nx serve",
     "build": "nx build",
     "lint": "nx lint",
-    "format": "nx format:write",
+    "format-write": "nx format:write",
     "test": "nx test",
     "test-coverage": "nx test --coverage",
     "e2e": "nx run e2e:e2e",
