@@ -5,7 +5,12 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "lint": "nx lint",
+    "format": "nx format:write",
+    "test": "nx test",
+    "test-coverage": "nx test --coverage",
+    "e2e": "nx run e2e:e2e",
+    "e2e-watch": "nx run e2e:e2e --watch"
   },
   "private": true,
   "dependencies": {
@@ -13,7 +18,9 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-is": "18.2.0",
-    "styled-components": "5.3.6"
+    "react-router-dom": "^6.18.0",
+    "styled-components": "5.3.6",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@nx/cypress": "17.0.2",
@@ -32,6 +39,7 @@
     "@types/react-dom": "18.2.9",
     "@types/react-is": "18.2.2",
     "@types/styled-components": "5.1.26",
+    "@types/uuid": "^9.0.6",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "@vitejs/plugin-react": "~4.0.0",
