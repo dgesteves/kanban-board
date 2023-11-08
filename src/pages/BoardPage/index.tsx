@@ -8,7 +8,7 @@ import { SearchIcon } from '../../ui/icons/SearchIcon';
 import Input from '../../ui/components/atoms/Input';
 import { StyledSearchWrap } from './styles';
 import Button from '../../ui/components/atoms/Button';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState, useCallback } from 'react';
 import { IBoard } from '../../types';
 import { getBoard } from '../../services/board';
 import { useParams } from 'react-router-dom';
@@ -20,56 +20,57 @@ import Column from '../../components/Column';
 export default function BoardPage() {
   const { id } = useParams<{ id: string }>();
   const [board, setBoard] = useState<IBoard>({ title: '', columns: [] });
-  const [filteredBoard, setFilteredBoard] = useState<IBoard>({
-    title: '',
-    columns: [],
-  });
+  const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     getBoard(id || '').then((res) => {
       setBoard(res);
-      setFilteredBoard(res);
     });
   }, [id]);
 
-  const onFilter = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFilteredBoard({
+  const filteredBoard = useCallback(() => {
+    if (search === '') {
+      return board;
+    }
+
+    return {
       ...board,
       columns: board.columns.map((column) => ({
         ...column,
         cards: column.cards.filter(
           (card) =>
-            card.title.toLowerCase().includes(value.toLowerCase()) ||
+            card.title.toLowerCase().includes(search.toLowerCase()) ||
             card?.categories?.some((category) =>
-              category.title.toLowerCase().includes(value.toLowerCase())
+              category.title.toLowerCase().includes(search.toLowerCase())
             )
         ),
       })),
-    });
-  };
+    };
+  }, [board, search]);
 
   return (
     <StyledBoard>
       <StyledSearchWrap>
-        <Badge color="dataLemon">{filteredBoard?.title}</Badge>
+        <Badge color="dataLemon">{filteredBoard()?.title}</Badge>
         <StyledSearchIcon>
           <SearchIcon size={16} />
         </StyledSearchIcon>
         <Input
           type="text"
           placeholder="Search Cards By Name or Category"
-          onChange={onFilter}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setSearch(e.target.value)
+          }
         />
       </StyledSearchWrap>
       <StyledColumnsWrap>
-        {filteredBoard?.columns.map((column) => (
+        {filteredBoard()?.columns.map((column) => (
           <Column
             key={column.id}
             column={column}
-            setBoard={setFilteredBoard}
-            board={filteredBoard}
+            setBoard={setBoard}
+            board={filteredBoard()}
           />
         ))}
         <Button
@@ -85,8 +86,8 @@ export default function BoardPage() {
       {isModalOpen && (
         <CreateNewColumnModal
           setIsModalOpen={setIsModalOpen}
-          board={filteredBoard}
-          setBoard={setFilteredBoard}
+          board={filteredBoard()}
+          setBoard={setBoard}
         />
       )}
     </StyledBoard>
