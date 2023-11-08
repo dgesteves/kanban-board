@@ -5,6 +5,7 @@ import {
   ChangeEvent,
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
   useState,
 } from 'react';
@@ -16,7 +17,7 @@ import BoardsGrid from '../../components/BoardsGrid';
 
 export default function BoardsPage() {
   const [boards, setBoards] = useState<IBoard[]>([]);
-  const [filteredBoards, setFilteredBoards] = useState<IBoard[]>([]);
+  const [search, setSearch] = useState('');
   const { setIsModalOpen } = useOutletContext<{
     setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   }>();
@@ -24,34 +25,39 @@ export default function BoardsPage() {
   useEffect(() => {
     getBoards().then((res) => {
       setBoards(res);
-      setFilteredBoards(res);
     });
   }, []);
 
-  const onFilter = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFilteredBoards(
-      boards.filter((board) => {
-        return board.title.toLowerCase().includes(value.toLowerCase());
-      })
+  const filteredBoards = useCallback(() => {
+    if (search === '') {
+      return boards;
+    }
+    return boards.filter((board) =>
+      board.title.toLowerCase().includes(search.toLowerCase())
     );
-  };
+  }, [boards, search]);
 
   return (
     <StyledBoards>
       {boards.length > 0 && (
         <StyledSearchWrap>
           <SearchIcon size={16} />
-          <Input type="text" placeholder="Search boards" onChange={onFilter} />
+          <Input
+            type="text"
+            placeholder="Search boards"
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
+          />
         </StyledSearchWrap>
       )}
-      {filteredBoards.length === 0 && boards.length > 0 && (
+      {filteredBoards().length === 0 && boards.length > 0 && (
         <StyledEmptyStateText>
           No boards found with this name
         </StyledEmptyStateText>
       )}
       {boards.length > 0 ? (
-        <BoardsGrid boards={filteredBoards} setBoards={setFilteredBoards} />
+        <BoardsGrid boards={filteredBoards()} setBoards={setBoards} />
       ) : (
         <BoardsEmpty setIsModalOpen={setIsModalOpen} />
       )}
