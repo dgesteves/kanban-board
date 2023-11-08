@@ -3,4 +3,6 @@ import { defineConfig } from 'cypress';
 
 export default defineConfig({
   e2e: nxE2EPreset(__filename, { cypressDir: 'src', bundler: 'vite' }),
+  viewportHeight: 1080,
+  viewportWidth: 1920,
 });

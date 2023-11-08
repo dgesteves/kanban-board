@@ -79,7 +79,9 @@ export default function CreateNewBoardModal({
         <Button onClick={() => setIsModalOpen(false)} variant="secondary">
           Cancel
         </Button>
-        <Button onClick={onCreate}>Create</Button>
+        <Button dataCy="create-board-modal-create-button" onClick={onCreate}>
+          Create
+        </Button>
       </StyledModalActions>
     </Modal>
   );

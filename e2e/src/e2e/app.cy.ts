@@ -1,13 +1,24 @@
-import { getGreeting } from '../support/app.po';
-
 describe('e2e', () => {
-  beforeEach(() => cy.visit('/'));
+  it('should display empty boards screen when no boards exist', () => {
+    cy.visit('/');
+    cy.get('p').should(
+      'contain',
+      "Looks like you don't have any kanban boards created currently, stat by creating a new board."
+    );
+    cy.get('button').should('contain', 'Create New Board');
+  });
 
-  it('should display welcome message', () => {
-    // Custom command example, see `../support/commands.ts` file
-    cy.login('my-email@something.com', 'myPassword');
+  it('should create a new board from empty state screen button', () => {
+    cy.visit('/');
+    cy.get('[data-cy="create-board-button-empty-state"]').click();
+    cy.get('input').type('Board 1');
+    cy.get('[data-cy="create-board-modal-create-button"]').click();
+  });
 
-    // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains(/Welcome/);
+  it('should create a new board from header button', () => {
+    cy.visit('/');
+    cy.get('button').contains('Create New Board').click();
+    cy.get('input').type('Board 2');
+    cy.get('[data-cy="create-board-modal-create-button"]').click();
   });
 });

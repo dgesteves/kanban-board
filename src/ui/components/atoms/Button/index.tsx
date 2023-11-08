@@ -7,12 +7,14 @@ export default function Button({
   variant = 'primary',
   size = 'large',
   fullWidth = false,
+  dataCy,
 }: {
   children: ReactNode | undefined;
   onClick: MouseEventHandler<HTMLButtonElement> | undefined;
   variant?: 'primary' | 'secondary' | 'tertiary' | 'icon';
   size?: 'small' | 'medium' | 'large';
   fullWidth?: boolean;
+  dataCy?: string;
 }) {
   return (
     <StyledButton
@@ -20,6 +22,7 @@ export default function Button({
       variant={variant}
       size={size}
       fullWidth={fullWidth}
+      data-cy={dataCy}
     >
       {children}
     </StyledButton>

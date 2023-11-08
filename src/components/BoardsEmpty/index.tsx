@@ -20,7 +20,11 @@ export default function BoardsEmpty({
           Looks like you don't have any kanban boards created currently, stat by
           creating a new board.
         </StyledEmptyStateText>
-        <Button onClick={() => setIsModalOpen(true)} variant="secondary">
+        <Button
+          dataCy="create-board-button-empty-state"
+          onClick={() => setIsModalOpen(true)}
+          variant="secondary"
+        >
           Create New Board
         </Button>
       </StyledEmptyState>
