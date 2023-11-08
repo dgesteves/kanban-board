@@ -49,7 +49,7 @@ export const StyledInput = styled.input`
 
   ::-webkit-calendar-picker-indicator {
     background-size: 16px;
-    background: url('/src/ui/images/clock.svg') no-repeat center;
+    background: url('/clock.svg') no-repeat center;
     cursor: pointer;
   }
 

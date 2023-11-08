@@ -32,7 +32,7 @@ export const StyledImageWrap = styled.div`
   width: 100%;
   height: 100%;
   gap: 4px;
-  background-image: url('/src/ui/images/plan.svg');
+  background-image: url('/plan.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;

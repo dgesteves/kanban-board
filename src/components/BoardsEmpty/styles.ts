@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const StyledCircle = styled.div`
   height: calc(100vh - 108px);
   width: 50vw;
-  background-image: url('/src/ui/images/circle-bg.svg');
+  background-image: url('/circle-bg.svg');
   transform: scale(1.5);
   background-position: 50%;
   background-repeat: no-repeat;

@@ -50,4 +50,4 @@
 
 ## Demo
 
-![Demo](https://user-images.githubusercontent.com/43800526/137647421-2b0b5b0a-4b0a-4b0a-8b0a-9b0a2b0a2b0a.gif)
+- [Demo](https://main.d1vo0v3io2mp56.amplifyapp.com/boards)
