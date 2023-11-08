@@ -23,7 +23,7 @@
 
 1. Clone the repo
    ```sh
-   git clone
+   git clone https://github.com/dgesteves/kanban-board.git
    ```
 2. Install NPM packages
    ```sh
