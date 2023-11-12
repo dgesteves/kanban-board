@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useRef } from 'react';
+import { useRef } from 'react';
 import useOnClickOutside from '../../../../hooks/useOnClickOutside';
 import {
   StyledModal,
@@ -8,22 +8,20 @@ import {
 } from './styles';
 import Button from '../../atoms/Button';
 import { CloseIcon } from '../../../icons/CloseIcon';
+import { IModalProps } from './types';
 
 export default function Modal({
-  children,
   setIsModalOpen,
   title,
-}: {
-  children: ReactNode | undefined;
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-  title: string;
-}) {
+  children,
+  ...props
+}: IModalProps) {
   const ref = useRef(null);
 
   useOnClickOutside(ref, () => setIsModalOpen(false));
 
   return (
-    <StyledModalOverlay>
+    <StyledModalOverlay {...props}>
       <StyledModal ref={ref}>
         <StyledModalHeader>
           <StyledModalTitle>{title}</StyledModalTitle>

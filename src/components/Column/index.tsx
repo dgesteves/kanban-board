@@ -19,10 +19,10 @@ import {
 } from 'react';
 import { IBoard, IColumn } from '../../types';
 import { deleteColumn } from '../../services/column';
-import EditColumnModal from '../EditColumnModal';
-import CreateNewCardModal from '../CreateNewCardModal';
 import Card from '../Card';
 import { createCard, deleteCard } from '../../services/card';
+import CardModal from '../CardModal';
+import ColumnModal from '../ColumnModal';
 
 export default function Column({
   column,
@@ -36,26 +36,46 @@ export default function Column({
   const [isHover, setIsHover] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const onEdit = (e: MouseEvent<HTMLButtonElement>) => {
+
+  const handleMouseEnter = () => {
+    setIsHover(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  const handleEditClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsModalOpen(true);
   };
 
-  const onDelete = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+  const handleDeleteClick = async (
+    e: MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
     e.stopPropagation();
-    deleteColumn(id, board.id || '').then(() => {
+    try {
+      await deleteColumn(id, board.id || '');
       setBoard((prev) => ({
         ...prev,
         columns: prev.columns.filter((column) => column.id !== id),
       }));
-    });
+    } catch (error) {
+      console.error('Error deleting column:', error);
+    }
   };
 
-  const onDragOver = (e: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
   };
 
-  const onDrop = (e: DragEvent<HTMLDivElement>) => {
+  const handleCreateClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setIsCardModalOpen(true);
+  };
+
+  const handleDrop = async (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
     const cardId = e.dataTransfer.getData('cardId');
@@ -69,7 +89,8 @@ export default function Column({
       return;
     }
 
-    createCard(board.id || '', column.id || '', card).then((res) => {
+    try {
+      const res = await createCard(board.id || '', column.id || '', card);
       setBoard((prev) => ({
         ...prev,
         columns: prev.columns.map((col) => {
@@ -83,23 +104,24 @@ export default function Column({
         }),
       }));
 
-      deleteCard(board.id || '', columnId, cardId).then(() => {
-        setBoard((prev) => ({
-          ...prev,
-          columns: prev.columns.map((column) => ({
-            ...column,
-            cards: column.cards.filter((c) => c.id !== cardId),
-          })),
-        }));
-      });
-    });
+      await deleteCard(board.id || '', columnId, cardId);
+      setBoard((prev) => ({
+        ...prev,
+        columns: prev.columns.map((column) => ({
+          ...column,
+          cards: column.cards.filter((c) => c.id !== cardId),
+        })),
+      }));
+    } catch (error) {
+      console.error('Error moving card:', error);
+    }
   };
 
   return (
     <StyledColumn>
       <StyledColumnHeader
-        onMouseEnter={() => setIsHover(true)}
-        onMouseLeave={() => setIsHover(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <StyledColumnActions>
           <StyledColumnColor color={column.color} />
@@ -108,11 +130,11 @@ export default function Column({
         <Badge color="systemGray">{column.cards.length}</Badge>
         {isHover && (
           <StyledColumnActions>
-            <Button onClick={onEdit} variant="icon" size="medium">
+            <Button onClick={handleEditClick} variant="icon" size="medium">
               <EditIcon size={16} />
             </Button>
             <Button
-              onClick={(e) => onDelete(e, column.id || '')}
+              onClick={(e) => handleDeleteClick(e, column.id as string)}
               variant="icon"
               size="medium"
             >
@@ -121,7 +143,11 @@ export default function Column({
           </StyledColumnActions>
         )}
       </StyledColumnHeader>
-      <StyledCardsWrap onDrop={onDrop} onDragOver={onDragOver}>
+      <StyledCardsWrap
+        data-cy="column drop zone"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
         {column.cards.map((card) => (
           <Card
             key={card.id}
@@ -133,7 +159,7 @@ export default function Column({
         ))}
       </StyledCardsWrap>
       <Button
-        onClick={() => setIsCardModalOpen(true)}
+        onClick={handleCreateClick}
         variant="primary"
         size="medium"
         fullWidth
@@ -141,19 +167,21 @@ export default function Column({
         Create New Card
       </Button>
       {isModalOpen && (
-        <EditColumnModal
+        <ColumnModal
           setIsModalOpen={setIsModalOpen}
           board={board}
           setBoard={setBoard}
           column={column}
+          mode={'edit'}
         />
       )}
       {isCardModalOpen && (
-        <CreateNewCardModal
+        <CardModal
           setIsModalOpen={setIsCardModalOpen}
           board={board}
           setBoard={setBoard}
           column={column}
+          mode={'create'}
         />
       )}
     </StyledColumn>

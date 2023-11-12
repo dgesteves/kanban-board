@@ -55,6 +55,7 @@ export const StyledCardCategories = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 4px;
   width: 100%;
 `;

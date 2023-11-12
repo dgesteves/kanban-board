@@ -1,12 +1,10 @@
 import { StyledTab } from './styles';
-import { ReactNode } from 'react';
+import { ITabProps } from './types';
 
-export default function Tab({
-  children,
-  to,
-}: {
-  children: ReactNode;
-  to: string;
-}) {
-  return <StyledTab to={to}>{children}</StyledTab>;
+export default function Tab({ children, to, ...props }: ITabProps) {
+  return (
+    <StyledTab to={to} {...props}>
+      {children}
+    </StyledTab>
+  );
 }

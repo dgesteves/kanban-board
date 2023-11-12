@@ -8,17 +8,13 @@ import {
   StyledTopBar,
   StyledTrailing,
 } from './styles';
-import { Dispatch, SetStateAction } from 'react';
 import Button from '../../atoms/Button';
 import Tab from '../../atoms/Tab';
+import { IHeaderProps } from './types';
 
-export default function Header({
-  setIsModalOpen,
-}: {
-  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function Header({ setIsModalOpen, ...props }: IHeaderProps) {
   return (
-    <StyledHeader>
+    <StyledHeader {...props}>
       <StyledTopBar>
         <StyledLogo>KanBoards</StyledLogo>
         <StyledTrailing>

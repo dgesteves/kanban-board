@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { IBoard } from '../../types';
+import { handleError } from '../../utils/handleError';
 
 export async function getBoardsFromLocalStorage(): Promise<IBoard[]> {
   return new Promise((resolve) => {
@@ -27,15 +28,15 @@ export async function getBoard(id: string): Promise<IBoard> {
       throw new Error('Board not found');
     }
   } catch (error) {
-    throw new Error(`Error retrieving board: ${(error as Error).message}`);
+    handleError(error as Error, 'Error retrieving board');
   }
 }
 
 export async function getBoards(): Promise<IBoard[]> {
   try {
-    return await getBoardsFromLocalStorage();
+    return getBoardsFromLocalStorage();
   } catch (error) {
-    throw new Error(`Error retrieving boards: ${(error as Error).message}`);
+    handleError(error as Error, 'Error retrieving boards');
   }
 }
 
@@ -47,7 +48,7 @@ export async function createBoard(board: IBoard): Promise<IBoard> {
     await updateBoardsInLocalStorage(updatedBoards);
     return newBoard;
   } catch (error) {
-    throw new Error(`Error creating board: ${(error as Error).message}`);
+    handleError(error as Error, 'Error creating board');
   }
 }
 
@@ -60,7 +61,7 @@ export async function updateBoard(updatedBoard: IBoard): Promise<IBoard> {
     await updateBoardsInLocalStorage(updatedBoards);
     return { ...updatedBoard };
   } catch (error) {
-    throw new Error(`Error updating board: ${(error as Error).message}`);
+    handleError(error as Error, 'Error updating board');
   }
 }
 
@@ -70,6 +71,6 @@ export async function deleteBoard(id: string): Promise<void> {
     const filteredBoards = boards.filter((board) => board.id !== id);
     await updateBoardsInLocalStorage(filteredBoards);
   } catch (error) {
-    throw new Error(`Error deleting board: ${(error as Error).message}`);
+    handleError(error as Error, 'Error deleting board');
   }
 }

@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { IColumn, ICard } from '../../types';
 import { getColumnsFromBoard, updateColumnsInBoard } from '../column';
+import { handleError } from '../../utils/handleError';
 
 async function getCardsFromColumn(
   boardId: string,
@@ -37,7 +38,7 @@ export async function getCard(
       throw new Error('Card not found');
     }
   } catch (error) {
-    throw new Error(`Error retrieving card: ${(error as Error).message}`);
+    handleError(error as Error, 'Error retrieving card');
   }
 }
 
@@ -46,9 +47,9 @@ export async function getCards(
   columnId: string
 ): Promise<ICard[]> {
   try {
-    return await getCardsFromColumn(boardId, columnId);
+    return getCardsFromColumn(boardId, columnId);
   } catch (error) {
-    throw new Error('Error retrieving cards: ' + (error as Error).message);
+    handleError(error as Error, 'Error retrieving cards');
   }
 }
 
@@ -64,7 +65,7 @@ export async function createCard(
     await updateCardsInColumn(boardId, columnId, updatedCards);
     return newCard;
   } catch (error) {
-    throw new Error(`Error creating card: ${(error as Error).message}`);
+    handleError(error as Error, 'Error creating card');
   }
 }
 
@@ -81,7 +82,7 @@ export async function updateCard(
     await updateCardsInColumn(boardId, columnId, updatedCards);
     return { ...updatedCard };
   } catch (error) {
-    throw new Error(`Error updating card: ${(error as Error).message}`);
+    handleError(error as Error, 'Error updating card');
   }
 }
 
@@ -95,6 +96,6 @@ export async function deleteCard(
     const filteredCards = cards.filter((card) => card.id !== cardId);
     await updateCardsInColumn(boardId, columnId, filteredCards);
   } catch (error) {
-    throw new Error(`Error deleting card: ${(error as Error).message}`);
+    handleError(error as Error, 'Error deleting card');
   }
 }

@@ -1,28 +1,21 @@
-import { MouseEventHandler, ReactNode } from 'react';
 import { StyledButton } from './styles';
+import { IButtonProps } from './types';
 
 export default function Button({
-  children,
-  onClick,
   variant = 'primary',
   size = 'large',
   fullWidth = false,
   dataCy,
-}: {
-  children: ReactNode | undefined;
-  onClick: MouseEventHandler<HTMLButtonElement> | undefined;
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'icon';
-  size?: 'small' | 'medium' | 'large';
-  fullWidth?: boolean;
-  dataCy?: string;
-}) {
+  children,
+  ...props
+}: IButtonProps) {
   return (
     <StyledButton
-      onClick={onClick}
       variant={variant}
       size={size}
       fullWidth={fullWidth}
       data-cy={dataCy}
+      {...props}
     >
       {children}
     </StyledButton>

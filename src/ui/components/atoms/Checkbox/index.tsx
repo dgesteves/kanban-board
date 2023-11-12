@@ -1,28 +1,10 @@
-import { MouseEventHandler } from 'react';
 import { StyledCheckbox } from './styles';
 import { CheckIcon } from '../../../icons/CheckIcon';
+import { ICheckboxProps } from './types';
 
-export default function Checkbox({
-  checked,
-  onClick,
-  color,
-}: {
-  checked: boolean;
-  onClick: MouseEventHandler<HTMLDivElement>;
-  color:
-    | 'dataFuchsia'
-    | 'dataTangerine'
-    | 'dataSea'
-    | 'dataLemon'
-    | 'dataEmerald'
-    | 'dataMustard'
-    | 'systemRed'
-    | 'systemGreen'
-    | 'systemGray'
-    | 'systemPurple';
-}) {
+export default function Checkbox({ checked, color, ...props }: ICheckboxProps) {
   return (
-    <StyledCheckbox onClick={onClick} color={color}>
+    <StyledCheckbox color={color} {...props}>
       {checked && <CheckIcon size={20} />}
     </StyledCheckbox>
   );

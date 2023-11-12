@@ -6,8 +6,8 @@ export const StyledContentWrap = styled.section`
   align-items: flex-start;
   padding: 0 16px;
   width: 100%;
-  margin-bottom: 16px;
-  gap: 8px;
+  height: 64px;
+  gap: 4px;
 `;
 
 export const StyledModalActions = styled.div`
@@ -28,8 +28,4 @@ export const StyledLabel = styled.span`
   font-size: 14px;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.grayIron300};
-`;
-
-export const StyledColorPicker = styled.div`
-  display: flex;
 `;

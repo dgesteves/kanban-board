@@ -1,12 +1,28 @@
 import 'styled-components';
 
+/**
+ * Extends the 'styled-components' module to include our custom theme.
+ */
 declare module 'styled-components' {
+  /**
+   * Interface for the application's default theme.
+   */
   export interface DefaultTheme {
+    /**
+     * Defines the color palette used throughout the application.
+     */
     colors: IColors;
+
+    /**
+     * Defines the spacing scale used for layout and positioning.
+     */
     spacing: ISpacing;
   }
 }
 
+/**
+ * Interface for the color palette of the application.
+ */
 interface IColors {
   white: string;
   grayIron100: string;
@@ -45,6 +61,9 @@ interface IColors {
   dataMustard: string;
 }
 
+/**
+ * Interface for the spacing scale of the application.
+ */
 interface ISpacing {
   space4: string;
   space8: string;

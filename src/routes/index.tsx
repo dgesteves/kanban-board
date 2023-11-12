@@ -3,6 +3,14 @@ import RootLayout from '../layouts/RootLayout';
 import ErrorPage from '../pages/ErrorPage';
 import BoardsPage from '../pages/BoardsPage';
 import BoardPage from '../pages/BoardPage';
+import { JSX } from 'react';
+
+function createRoute(path: string, element: JSX.Element): object {
+  return {
+    path,
+    element,
+  };
+}
 
 export const router = createBrowserRouter([
   {
@@ -10,14 +18,8 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <ErrorPage />,
     children: [
-      {
-        path: '/boards',
-        element: <BoardsPage />,
-      },
-      {
-        path: '/board/:id',
-        element: <BoardPage />,
-      },
+      createRoute('/boards', <BoardsPage />),
+      createRoute('/board/:id', <BoardPage />),
     ],
   },
 ]);

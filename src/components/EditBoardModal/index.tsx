@@ -5,6 +5,7 @@ import {
   Dispatch,
   SetStateAction,
   useState,
+  useCallback,
 } from 'react';
 import { StyledContentWrap, StyledLabel, StyledModalActions } from './styles';
 import Button from '../../ui/components/atoms/Button';
@@ -12,7 +13,7 @@ import Input from '../../ui/components/atoms/Input';
 import { updateBoard } from '../../services/board';
 import { IBoard } from '../../types';
 
-export default function EditBoardModal({
+function EditBoardModal({
   setIsModalOpen,
   board,
   setBoards,
@@ -21,20 +22,42 @@ export default function EditBoardModal({
   board: IBoard;
   setBoards: Dispatch<SetStateAction<IBoard[]>>;
 }) {
-  const [boardTitle, setBoardTitle] = useState<string>('');
+  const [boardTitle, setBoardTitle] = useState<string>(board.title);
 
-  const onEdit = () => {
-    if (boardTitle === '') {
+  const handleEditClick = useCallback(() => {
+    if (boardTitle.trim() === '') {
       return;
     }
 
-    updateBoard({ ...board, title: boardTitle }).then((res) => {
-      setBoards((prev) =>
-        prev.map((board) => (board.id === res.id ? res : board))
-      );
-      setIsModalOpen(false);
-    });
-  };
+    updateBoard({ ...board, title: boardTitle })
+      .then((res) => {
+        setBoards((prev) =>
+          prev.map((board) => (board.id === res.id ? res : board))
+        );
+        setIsModalOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error updating board:', error);
+      });
+  }, [board, boardTitle, setBoards, setIsModalOpen]);
+
+  const handleInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setBoardTitle(e.target.value);
+    },
+    [setBoardTitle]
+  );
+
+  const handleInputKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      e.key === 'Enter' && handleEditClick();
+    },
+    [handleEditClick]
+  );
+
+  const handleCancelClick = useCallback(() => {
+    setIsModalOpen(false);
+  }, [setIsModalOpen]);
 
   return (
     <Modal setIsModalOpen={setIsModalOpen} title="Rename Board">
@@ -42,21 +65,17 @@ export default function EditBoardModal({
         <StyledLabel>Board Title</StyledLabel>
         <Input
           value={boardTitle}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setBoardTitle(e.target.value)
-          }
-          onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
-            e.key === 'Enter' && onEdit()
-          }
+          onChange={handleInputChange}
+          onKeyDown={handleInputKeyDown}
           type="text"
           placeholder={'Rename Board...'}
         />
       </StyledContentWrap>
       <StyledModalActions>
-        <Button onClick={() => setIsModalOpen(false)} variant="secondary">
+        <Button onClick={handleCancelClick} variant="secondary">
           Cancel
         </Button>
-        <Button onClick={onEdit}>Save</Button>
+        <Button onClick={handleEditClick}>Save</Button>
       </StyledModalActions>
     </Modal>
   );

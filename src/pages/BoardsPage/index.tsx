@@ -1,19 +1,23 @@
-import { StyledBoards, StyledSearchWrap, StyledEmptyStateText } from './styles';
+import { StyledBoards, StyledEmptyStateText, StyledSearchWrap } from './styles';
 import { IBoard } from '../../types';
 import { useOutletContext } from 'react-router-dom';
 import {
   ChangeEvent,
   Dispatch,
+  lazy,
   SetStateAction,
+  Suspense,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { getBoards } from '../../services/board';
 import Input from '../../ui/components/atoms/Input';
 import { SearchIcon } from '../../ui/icons/SearchIcon';
-import BoardsEmpty from '../../components/BoardsEmpty';
-import BoardsGrid from '../../components/BoardsGrid';
+
+const BoardsEmpty = lazy(() => import('../../components/BoardsEmpty'));
+const BoardsGrid = lazy(() => import('../../components/BoardsGrid'));
 
 export default function BoardsPage() {
   const [boards, setBoards] = useState<IBoard[]>([]);
@@ -23,12 +27,18 @@ export default function BoardsPage() {
   }>();
 
   useEffect(() => {
-    getBoards().then((res) => {
-      setBoards(res);
-    });
+    getBoards()
+      .then(setBoards)
+      .catch((error) => {
+        console.error('Error fetching boards:', error);
+      });
   }, []);
 
-  const filteredBoards = useCallback(() => {
+  const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  }, []);
+
+  const filteredBoards = useMemo(() => {
     if (search === '') {
       return boards;
     }
@@ -45,21 +55,23 @@ export default function BoardsPage() {
           <Input
             type="text"
             placeholder="Search boards"
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
+            onChange={handleSearchChange}
           />
         </StyledSearchWrap>
       )}
-      {filteredBoards().length === 0 && boards.length > 0 && (
+      {filteredBoards.length === 0 && boards.length > 0 && (
         <StyledEmptyStateText>
           No boards found with this name
         </StyledEmptyStateText>
       )}
       {boards.length > 0 ? (
-        <BoardsGrid boards={filteredBoards()} setBoards={setBoards} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <BoardsGrid boards={filteredBoards} setBoards={setBoards} />
+        </Suspense>
       ) : (
-        <BoardsEmpty setIsModalOpen={setIsModalOpen} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <BoardsEmpty setIsModalOpen={setIsModalOpen} />
+        </Suspense>
       )}
     </StyledBoards>
   );

@@ -4,6 +4,7 @@ import {
   getBoardsFromLocalStorage,
   updateBoardsInLocalStorage,
 } from '../board';
+import { handleError } from '../../utils/handleError';
 
 export async function getColumnsFromBoard(boardId: string): Promise<IColumn[]> {
   const boards: IBoard[] = await getBoardsFromLocalStorage();
@@ -32,15 +33,15 @@ export async function getColumn(id: string, boardId: string): Promise<IColumn> {
       throw new Error('Column not found');
     }
   } catch (error) {
-    throw new Error(`Error retrieving column: ${(error as Error).message}`);
+    handleError(error as Error, 'Error retrieving column');
   }
 }
 
 export async function getColumns(boardId: string): Promise<IColumn[]> {
   try {
-    return await getColumnsFromBoard(boardId);
+    return getColumnsFromBoard(boardId);
   } catch (error) {
-    throw new Error(`Error retrieving columns: ${(error as Error).message}`);
+    handleError(error as Error, 'Error retrieving columns');
   }
 }
 
@@ -55,7 +56,7 @@ export async function createColumn(
     await updateColumnsInBoard(boardId, updatedColumns);
     return newColumn;
   } catch (error) {
-    throw new Error(`Error creating column: ${(error as Error).message}`);
+    handleError(error as Error, 'Error creating column');
   }
 }
 
@@ -71,7 +72,7 @@ export async function updateColumn(
     await updateColumnsInBoard(boardId, updatedColumns);
     return { ...updatedColumn };
   } catch (error) {
-    throw new Error(`Error updating column: ${(error as Error).message}`);
+    handleError(error as Error, 'Error updating column');
   }
 }
 
@@ -81,6 +82,6 @@ export async function deleteColumn(id: string, boardId: string): Promise<void> {
     const filteredColumns = columns.filter((column) => column.id !== id);
     await updateColumnsInBoard(boardId, filteredColumns);
   } catch (error) {
-    throw new Error(`Error deleting column: ${(error as Error).message}`);
+    handleError(error as Error, 'Error deleting column');
   }
 }

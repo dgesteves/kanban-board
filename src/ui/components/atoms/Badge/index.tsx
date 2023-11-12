@@ -1,12 +1,10 @@
 import { StyledBadge } from './styles';
-import { ReactNode } from 'react';
+import { IBadgeProps } from './types';
 
-export default function Badge({
-  children,
-  color,
-}: {
-  children: ReactNode;
-  color: string;
-}) {
-  return <StyledBadge color={color}>{children}</StyledBadge>;
+export default function Badge({ children, color, ...props }: IBadgeProps) {
+  return (
+    <StyledBadge color={color} {...props}>
+      {children}
+    </StyledBadge>
+  );
 }

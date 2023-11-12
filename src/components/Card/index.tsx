@@ -17,10 +17,12 @@ import {
   DragEvent,
   MouseEvent,
   SetStateAction,
+  useCallback,
+  useMemo,
   useState,
 } from 'react';
 import { deleteCard } from '../../services/card';
-import EditCardModal from '../EditCardModal';
+import CardModal from '../CardModal';
 
 export default function Card({
   card,
@@ -36,8 +38,9 @@ export default function Card({
   const [isHover, setIsHover] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onDelete = () => {
-    deleteCard(board.id || '', column.id || '', card.id || '').then(() => {
+  const handleDeleteClick = async () => {
+    try {
+      await deleteCard(board.id || '', column.id || '', card.id || '');
       setBoard((prev) => ({
         ...prev,
         columns: prev.columns.map((column) => ({
@@ -45,28 +48,39 @@ export default function Card({
           cards: column.cards.filter((c) => c.id !== card.id),
         })),
       }));
-    });
+    } catch (error) {
+      console.error('Error deleting card:', error);
+    }
   };
 
-  const onEdit = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleEditClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const isDateInPast = (date: Date): boolean => {
+  const isDateInPast = useCallback((date: Date): boolean => {
     const today = new Date();
     return date < today;
-  };
+  }, []);
 
-  const isCardDue = (dueDate: string): boolean => {
-    const date = new Date(dueDate);
-    return isDateInPast(date);
-  };
+  const isCardDue = useCallback(
+    (dueDate: string): boolean => {
+      const date = new Date(dueDate);
+      return isDateInPast(date);
+    },
+    [isDateInPast]
+  );
+
+  const cardDue = useMemo(
+    () => isCardDue(card.dueDate || ''),
+    [card.dueDate, isCardDue]
+  );
 
   const renderCardDescription = () => {
     const descriptionArray = card.description.split('\n');
     return (
       <StyledCardDescription>
+        <span>Description: </span>
         {descriptionArray.map((line, index) => (
           <span key={index}>
             {line}
@@ -77,35 +91,40 @@ export default function Card({
     );
   };
 
-  const onDragStart = (e: DragEvent<HTMLDivElement>) => {
+  const handleDragStart = (e: DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData('cardId', card.id || '');
     e.dataTransfer.setData('columnId', column.id || '');
     e.dataTransfer.effectAllowed = 'move';
   };
 
+  const handleMouseEnter = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsHover(true);
+  };
+
+  const handleMouseLeave = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    setIsHover(false);
+  };
+
   return (
     <>
       <StyledCard
-        onMouseEnter={(e) => {
-          e.stopPropagation();
-          setIsHover(true);
-        }}
-        onMouseLeave={(e) => {
-          e.stopPropagation();
-          setIsHover(false);
-        }}
-        due={isCardDue(card.dueDate || '')}
+        data-cy="card-to-drag"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        due={cardDue}
         draggable
-        onDragStart={onDragStart}
+        onDragStart={handleDragStart}
       >
         <StyledCardHeader>
-          <StyledCardTitle>{card.title}</StyledCardTitle>
+          <StyledCardTitle>Title: {card.title}</StyledCardTitle>
           {isHover && (
             <>
-              <Button onClick={onEdit} variant="icon" size="medium">
+              <Button onClick={handleEditClick} variant="icon" size="medium">
                 <EditIcon size={16} />
               </Button>
-              <Button onClick={onDelete} variant="icon" size="medium">
+              <Button onClick={handleDeleteClick} variant="icon" size="medium">
                 <TrashIcon size={16} color="#FF344C" />
               </Button>
             </>
@@ -131,12 +150,13 @@ export default function Card({
         )}
       </StyledCard>
       {isModalOpen && (
-        <EditCardModal
+        <CardModal
           setIsModalOpen={setIsModalOpen}
           board={board}
           column={column}
           setBoard={setBoard}
           card={card}
+          mode={'edit'}
         />
       )}
     </>

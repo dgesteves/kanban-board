@@ -20,7 +20,7 @@ export const StyledBadge = styled.span<{ color: string }>`
       case 'dataEmerald':
         return 'rgba(0, 255, 0, 0.2)';
       case 'dataMustard':
-        return 'rgba(18, 183, 106, 0.2)';
+        return 'rgba(159, 122, 94, 0.2)';
       case 'systemRed':
         return 'rgba(255, 107, 132, 0.2)';
       case 'systemGreen':
