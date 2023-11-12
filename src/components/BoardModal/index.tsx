@@ -30,6 +30,8 @@ export default function BoardModal({
   const navigate = useNavigate();
   const [boardTitle, setBoardTitle] = useState<string>(board?.title || '');
 
+  console.log('board', board);
+
   const columns: IColumn[] = useMemo(
     () => (mode === 'create' ? DEFAULT_COLUMNS : board?.columns || []),
     [mode, board]
