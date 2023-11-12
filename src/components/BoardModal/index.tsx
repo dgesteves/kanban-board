@@ -30,8 +30,6 @@ export default function BoardModal({
   const navigate = useNavigate();
   const [boardTitle, setBoardTitle] = useState<string>(board?.title || '');
 
-  console.log('board', board);
-
   const columns: IColumn[] = useMemo(
     () => (mode === 'create' ? DEFAULT_COLUMNS : board?.columns || []),
     [mode, board]
@@ -97,7 +95,14 @@ export default function BoardModal({
         <Button onClick={handleCancel} variant="secondary">
           Cancel
         </Button>
-        <Button onClick={handleAction}>
+        <Button
+          dataCy={
+            mode === 'create'
+              ? 'create-board-button-modal'
+              : 'save-board-button-modal'
+          }
+          onClick={handleAction}
+        >
           {mode === 'create' ? 'Create' : 'Save'}
         </Button>
       </StyledModalActions>

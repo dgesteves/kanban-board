@@ -125,6 +125,7 @@ export default function CardModal({
       <StyledContentWrap>
         <StyledLabel>Card Title</StyledLabel>
         <Input
+          dataCy={'card-title'}
           value={modalCard.title}
           onChange={(e) => handleCardChange('title', e.target.value)}
           onKeyDown={handleKeyDown}
@@ -182,7 +183,10 @@ export default function CardModal({
         <Button onClick={handleCancel} variant="secondary">
           Cancel
         </Button>
-        <Button onClick={handleAction}>
+        <Button
+          dataCy={mode === 'edit' ? 'edit-card' : 'create-card'}
+          onClick={handleAction}
+        >
           {mode === 'edit' ? 'Save' : 'Create'}
         </Button>
       </StyledModalActions>

@@ -20,7 +20,7 @@ export default function BoardsEmpty({
         </StyledCircle>
       </StyledCircle>
       <StyledEmptyState>
-        <StyledEmptyStateText>
+        <StyledEmptyStateText data-cy="empty-boards-text">
           Looks like you don't have any kanban boards created currently, start
           by creating a new board.
         </StyledEmptyStateText>
