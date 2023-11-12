@@ -44,4 +44,4 @@
 
 ## Demo
 
-- [Demo](https://kanban-board-jade-xi.vercel.app/boards)
+- [Demo](https://kanban-board-jade-xi.vercel.app)
