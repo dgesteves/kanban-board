@@ -24,7 +24,7 @@ export default function BoardModal({
 }: {
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   board?: IBoard;
-  setBoards: Dispatch<SetStateAction<IBoard[]>>;
+  setBoards?: Dispatch<SetStateAction<IBoard[]>>;
   mode: 'create' | 'edit';
 }) {
   const navigate = useNavigate();
@@ -40,26 +40,31 @@ export default function BoardModal({
       return;
     }
 
+    const newBoard: IBoard = board
+      ? { ...board, title: boardTitle }
+      : {
+          title: boardTitle,
+          columns,
+        };
+
     const boardAction = mode === 'edit' ? updateBoard : createBoard;
-    const newBoard: IBoard = {
-      title: boardTitle,
-      columns,
-    };
 
     boardAction(newBoard)
       .then((res) => {
-        setBoards((prev) =>
-          mode === 'edit'
-            ? prev.map((b) => (b.id === res.id ? res : b))
-            : [...prev, res]
-        );
+        if (mode === 'edit' && setBoards) {
+          setBoards((prev) => prev.map((b) => (b.id === res.id ? res : b)));
+        }
         setIsModalOpen(false);
-        navigate(`/board/${res.id}`);
+        if (mode === 'create') {
+          navigate(`/board/${res.id}`);
+        }
       })
-      .catch((error) => {
-        console.error(`Error ${mode}ing board:`, error);
-      });
-  }, [boardTitle, mode, columns, setBoards, setIsModalOpen, navigate]);
+      .catch((error) =>
+        console.error(
+          `Error ${mode === 'edit' ? 'updating' : 'creating'} board: ${error}`
+        )
+      );
+  }, [boardTitle, columns, mode, board, setBoards, setIsModalOpen, navigate]);
 
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setBoardTitle(e.target.value);

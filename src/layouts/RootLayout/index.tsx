@@ -2,11 +2,9 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Header from '../../ui/components/organisms/Header';
 import BoardModal from '../../components/BoardModal';
-import { IBoard } from '../../types';
 
 export default function RootLayout() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [, setBoards] = useState<IBoard[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,11 +23,7 @@ export default function RootLayout() {
       <Header setIsModalOpen={setIsModalOpen} />
       <Outlet context={{ setIsModalOpen }} />
       {isModalOpen && (
-        <BoardModal
-          setIsModalOpen={setIsModalOpen}
-          setBoards={setBoards}
-          mode={'create'}
-        />
+        <BoardModal setIsModalOpen={setIsModalOpen} mode={'create'} />
       )}
     </>
   );
